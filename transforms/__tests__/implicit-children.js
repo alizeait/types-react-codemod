@@ -15,6 +15,25 @@ function applyTransform(source, options = {}) {
 }
 
 describe("transform implicit-children", () => {
+	test("Skips adding PropsWithChildren if it already exists", () => {
+		expect(
+			applyTransform(`
+        const A: React.FC<React.PropsWithChildren<{prop1:1}>>;
+    `)
+		).toMatchInlineSnapshot(
+			`"const A: React.FC<React.PropsWithChildren<{prop1:1}>>;"`
+		);
+	});
+
+	test("Skips adding PropsWithChildren if children prop already exists", () => {
+		expect(
+			applyTransform(`
+        const A: React.FC<{prop1:1,children:React.ReactNode}>;
+    `)
+		).toMatchInlineSnapshot(
+			`"const A: React.FC<{prop1:1,children:React.ReactNode}>;"`
+		);
+	});
 	test("FC", () => {
 		expect(
 			applyTransform(`
@@ -101,7 +120,7 @@ describe("transform implicit-children", () => {
         const A: FunctionComponent<React.PropsWithChildren<unknown>, {}>;
     `)
 		).toMatchInlineSnapshot(
-			`"const A: FunctionComponent<React.PropsWithChildren<React.PropsWithChildren<unknown>>, {}>;"`
+			`"const A: FunctionComponent<React.PropsWithChildren<unknown>, {}>;"`
 		);
 	});
 

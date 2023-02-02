@@ -35,6 +35,32 @@ const implicitChildrenTransform = (file, api) => {
 				].includes(identifier.name);
 			}
 		})
+		.filter((typeReference) => {
+			const typeName = typeReference.get("typeParameters").get("params")
+				.value?.[0]?.typeName;
+			const identifier =
+				typeName?.type === "TSQualifiedName"
+					? /** @type {any} */ (typeName?.right)
+					: typeName;
+			const alreadyHasPropsWithChildren =
+				identifier?.name === "PropsWithChildren";
+
+			// Skip if PropsWithChildren is already used
+			if (alreadyHasPropsWithChildren) {
+				return false;
+			}
+
+			// Skip if children prop is already present in the props list
+			const params = typeReference.get("typeParameters").get("params")
+				.value ?? [j.tsUnknownKeyword()];
+
+			const hasChildren = params?.some((param) => {
+				return param?.members?.some(
+					(member) => member?.key?.name === "children"
+				);
+			});
+			return !hasChildren;
+		})
 		.forEach((typeReference) => {
 			// TODO: Check if `React.PropsWithChildren` or `PropsWithChildren` is available
 			const propsWithChildrenTypeName = j.tsQualifiedName(
