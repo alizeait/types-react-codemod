@@ -9,7 +9,8 @@
 		"test:lint": "eslint bin/**/*.{cjs,js,mjs} transforms/**/*.{cjs,js,mjs}",
 		"test:renovate": "npx --package renovate -c renovate-config-validator",
 		"test:types": "tsc -p tsconfig.json --noEmit",
-		"test:unit": "jest"
+		"test:unit": "jest",
+		"test": "jest -u"
 	},
 	"engines": {
 		"node": "14.x || 16.x || 17.x || 18.x || 19.x"
